@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Function to analyze system logs for suspicious activity
+analyze_logs() {
+  # Check for failed login attempts
+  grep "Failed password for" /var/log/auth.log | awk '{print $11}' | uniq -c | sort -nr | head -n 5
+  echo
+
+  # Check for root logins
+  grep "root" /var/log/auth.log | grep -v "Accepted password for root" | awk '{print $11}' | uniq -c | sort -nr | head -n 5
+  echo
+
+  # Check for unusual system activity
+  grep -E "error|warning|failed" /var/log/syslog | awk '{print $1}' | uniq -c | sort -nr | head -n 5
+}
+
+# Run the analysis
+analyze_logs
